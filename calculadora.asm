@@ -645,12 +645,16 @@ print_int:
     cmp eax, 0
     jge positivo
 
+    neg eax
+
+    push eax
+
     push 1
     push sinalMenos
     call print_string
     add esp, 8
 
-    neg eax
+    pop eax
 
 positivo:
 
