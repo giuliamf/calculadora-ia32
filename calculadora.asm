@@ -13,7 +13,7 @@ section .data
 
 sinalMenos db "-"
 
-msgNome db "Bem vindo. Digite seu nome: "
+msgNome db "Bem-vindo. Digite seu nome: "
 tamNome equ $-msgNome
 
 msgOla db 10,"Hola, "
@@ -298,6 +298,11 @@ executar_subtracao:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_multiplicacao:
@@ -367,6 +372,11 @@ executar_multiplicacao:
     push dword [num1]
     call print_int
     add esp, 4
+
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
 
     jmp menu
 
@@ -438,6 +448,11 @@ executar_divisao:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_expo:
@@ -508,6 +523,11 @@ executar_expo:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_mod:
@@ -577,6 +597,11 @@ executar_mod:
     push dword [num1]
     call print_int
     add esp, 4
+
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
 
     jmp menu
 

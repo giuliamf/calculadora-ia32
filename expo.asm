@@ -18,6 +18,9 @@ loop_exp:
     cmp ecx, 0
     je fim_exp
 
+    cmp ecx, 0
+    jl fim_exp
+
     imul eax, ebx
 
     jo overflow
