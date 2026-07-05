@@ -10,6 +10,8 @@ extern expo
 
 section .data
 
+sinalMenos db "-"
+
 msgNome db "Digite seu nome: "
 tamNome equ $-msgNome
 
@@ -640,6 +642,18 @@ print_int:
 
     mov eax, [ebp+8]
 
+    cmp eax, 0
+    jge positivo
+
+    push 1
+    push sinalMenos
+    call print_string
+    add esp, 8
+
+    neg eax
+
+positivo:
+
     mov esi, resultadoBuffer
     add esi, 15
 
@@ -670,6 +684,22 @@ converter:
     call print_string
     add esp, 8
 
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+
+    pop ebp
+    ret
+
+imprimir_numero:
+
+    push ecx
+    push esi
+    call print_string
+    add esp, 8
+
+    pop edi
     pop esi
     pop edx
     pop ecx
@@ -749,14 +779,14 @@ atoi:
     mov esi, [ebp+8]
 
     xor eax, eax
-    xor ecx, ecx
+    xor edx, edx        ; flag de negativo
 
     mov bl, [esi]
 
     cmp bl, '-'
     jne loop_atoi
 
-    mov ecx, 1
+    mov dl, 1
     inc esi
 
 loop_atoi:
@@ -773,16 +803,14 @@ loop_atoi:
     sub bl, '0'
 
     imul eax, eax, 10
-
     add eax, ebx
 
     inc esi
-
     jmp loop_atoi
 
 fim_atoi:
 
-    cmp ecx, 1
+    cmp dl, 1
     jne fim_atoi_ok
 
     neg eax
