@@ -1,4 +1,6 @@
 global _start
+global overflow
+global erro_div_zero
 
 extern soma
 extern subtracao
@@ -9,7 +11,9 @@ extern expo
 
 section .data
 
-msgNome db "Digite seu nome: "
+sinalMenos db "-"
+
+msgNome db "Bem-vindo. Digite seu nome: "
 tamNome equ $-msgNome
 
 msgOla db 10,"Hola, "
@@ -41,9 +45,18 @@ tamNum2 equ $-msgNum2
 msgResultado db 10,"Resultado: "
 tamResultado equ $-msgResultado
 
+msgErro16 db 10,"ERRO: valor fora do intervalo de 16 bits",10
+tamErro16 equ $-msgErro16
+
+msgOverflow db 10,"OCORREU OVERFLOW",10
+tamOverflow equ $-msgOverflow
+
+msgDivZero db 10,"ERRO: DIVISAO POR ZERO",10
+tamDivZero equ $-msgDivZero
 
 section .bss
 
+enterBuffer resb 2
 nome resb 50
 precisao resb 2
 opcao resb 2
@@ -145,32 +158,54 @@ executar_soma:
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+; Ler o primeiro número com base na precisão escolhida
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_num1_16
 
-    mov [num1], eax
+    jmp ler_num1_32
+
+    ler_num1_16:
+
+        call read_int16
+        jmp guardar_num1
+
+    ler_num1_32:
+
+        call read_int32
+
+    guardar_num1:
+
+        mov [num1], eax
+; Fim da leitura do primeiro número
 
     push tamNum2
     push msgNum2
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+; Ler o segundo número com base na precisão escolhida
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_num2_16
 
-    mov [num2], eax
+    jmp ler_num2_32
+
+    ler_num2_16:
+
+        call read_int16
+        jmp guardar_num2
+
+    ler_num2_32:
+
+        call read_int32
+
+    guardar_num2:
+
+        mov [num2], eax
+; Fim da leitura do segundo número
 
     push dword [num2]
     push dword [num1]
@@ -188,6 +223,11 @@ executar_soma:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_subtracao:
@@ -197,32 +237,50 @@ executar_subtracao:
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_sub_num1_16
 
-    mov [num1], eax
+    jmp ler_sub_num1_32
 
-    push tamNum2
-    push msgNum2
-    call print_string
-    add esp, 8
+    ler_sub_num1_16:
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+        call read_int16
+        jmp guardar_sub_num1
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    ler_sub_num1_32:
 
-    mov [num2], eax
+        call read_int32
+
+    guardar_sub_num1:
+
+        mov [num1], eax
+
+        push tamNum2
+        push msgNum2
+        call print_string
+        add esp, 8
+
+        mov al, [precisao]
+
+        cmp al, '0'
+        je ler_sub_num2_16
+
+        jmp ler_sub_num2_32
+
+    ler_sub_num2_16:
+
+        call read_int16
+        jmp guardar_sub_num2
+
+    ler_sub_num2_32:
+
+        call read_int32
+
+    guardar_sub_num2:
+
+        mov [num2], eax
 
     push dword [num2]
     push dword [num1]
@@ -240,6 +298,11 @@ executar_subtracao:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_multiplicacao:
@@ -249,32 +312,50 @@ executar_multiplicacao:
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_mul_num1_16
 
-    mov [num1], eax
+    jmp ler_mul_num1_32
 
-    push tamNum2
-    push msgNum2
-    call print_string
-    add esp, 8
+    ler_mul_num1_16:
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+        call read_int16
+        jmp guardar_mul_num1
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    ler_mul_num1_32:
 
-    mov [num2], eax
+        call read_int32
+
+    guardar_mul_num1:
+
+        mov [num1], eax
+
+        push tamNum2
+        push msgNum2
+        call print_string
+        add esp, 8
+
+        mov al, [precisao]
+
+        cmp al, '0'
+        je ler_mul_num2_16
+
+        jmp ler_mul_num2_32
+
+    ler_mul_num2_16:
+
+        call read_int16
+        jmp guardar_mul_num2
+
+    ler_mul_num2_32:
+
+        call read_int32
+
+    guardar_mul_num2:
+
+        mov [num2], eax
 
     push dword [num2]
     push dword [num1]
@@ -292,6 +373,11 @@ executar_multiplicacao:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_divisao:
@@ -301,32 +387,50 @@ executar_divisao:
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_div_num1_16
 
-    mov [num1], eax
+    jmp ler_div_num1_32
 
-    push tamNum2
-    push msgNum2
-    call print_string
-    add esp, 8
+    ler_div_num1_16:
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+        call read_int16
+        jmp guardar_div_num1
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    ler_div_num1_32:
 
-    mov [num2], eax
+        call read_int32
+
+    guardar_div_num1:
+
+        mov [num1], eax
+
+        push tamNum2
+        push msgNum2
+        call print_string
+        add esp, 8
+
+        mov al, [precisao]
+
+        cmp al, '0'
+        je ler_div_num2_16
+
+        jmp ler_div_num2_32
+
+    ler_div_num2_16:
+
+        call read_int16
+        jmp guardar_div_num2
+
+    ler_div_num2_32:
+
+        call read_int32
+
+    guardar_div_num2:
+
+        mov [num2], eax
 
     push dword [num2]
     push dword [num1]
@@ -344,6 +448,11 @@ executar_divisao:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_expo:
@@ -353,32 +462,50 @@ executar_expo:
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_exp_num1_16
 
-    mov [num1], eax
+    jmp ler_exp_num1_32
 
-    push tamNum2
-    push msgNum2
-    call print_string
-    add esp, 8
+    ler_exp_num1_16:
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+        call read_int16
+        jmp guardar_exp_num1
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    ler_exp_num1_32:
 
-    mov [num2], eax
+        call read_int32
+
+    guardar_exp_num1:
+
+        mov [num1], eax
+
+        push tamNum2
+        push msgNum2
+        call print_string
+        add esp, 8
+
+        mov al, [precisao]
+
+        cmp al, '0'
+        je ler_exp_num2_16
+
+        jmp ler_exp_num2_32
+
+    ler_exp_num2_16:
+
+        call read_int16
+        jmp guardar_exp_num2
+
+    ler_exp_num2_32:
+
+        call read_int32
+
+    guardar_exp_num2:
+
+        mov [num2], eax
 
     push dword [num2]
     push dword [num1]
@@ -396,6 +523,11 @@ executar_expo:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
 
 executar_mod:
@@ -405,32 +537,50 @@ executar_mod:
     call print_string
     add esp, 8
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+    mov al, [precisao]
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    cmp al, '0'
+    je ler_mod_num1_16
 
-    mov [num1], eax
+    jmp ler_mod_num1_32
 
-    push tamNum2
-    push msgNum2
-    call print_string
-    add esp, 8
+    ler_mod_num1_16:
 
-    push 16
-    push numBuffer
-    call read_string
-    add esp, 8
+        call read_int16
+        jmp guardar_mod_num1
 
-    push numBuffer
-    call atoi
-    add esp, 4
+    ler_mod_num1_32:
 
-    mov [num2], eax
+        call read_int32
+
+    guardar_mod_num1:
+
+        mov [num1], eax
+
+        push tamNum2
+        push msgNum2
+        call print_string
+        add esp, 8
+
+        mov al, [precisao]
+
+        cmp al, '0'
+        je ler_mod_num2_16
+
+        jmp ler_mod_num2_32
+
+    ler_mod_num2_16:
+
+        call read_int16
+        jmp guardar_mod_num2
+
+    ler_mod_num2_32:
+
+        call read_int32
+
+    guardar_mod_num2:
+
+        mov [num2], eax
 
     push dword [num2]
     push dword [num1]
@@ -448,7 +598,30 @@ executar_mod:
     call print_int
     add esp, 4
 
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
+
     jmp menu
+
+overflow:
+
+    push tamOverflow
+    push msgOverflow
+    call print_string
+    add esp, 8
+
+    jmp fim
+
+erro_div_zero:
+
+    push tamDivZero
+    push msgDivZero
+    call print_string
+    add esp, 8
+
+    jmp fim
 
 fim:
 
@@ -513,6 +686,22 @@ print_int:
 
     mov eax, [ebp+8]
 
+    cmp eax, 0
+    jge positivo
+
+    neg eax
+
+    push eax
+
+    push 1
+    push sinalMenos
+    call print_string
+    add esp, 8
+
+    pop eax
+
+positivo:
+
     mov esi, resultadoBuffer
     add esi, 15
 
@@ -550,6 +739,22 @@ converter:
 
     pop ebp
     ret
+
+imprimir_numero:
+
+    push ecx
+    push esi
+    call print_string
+    add esp, 8
+
+    pop edi
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+
+    pop ebp
+    ret
 print_string:
 
     push ebp
@@ -565,6 +770,55 @@ print_string:
     pop ebp
     ret
 
+read_int32:
+
+    push ebp
+    mov ebp, esp
+
+    push 16
+    push numBuffer
+    call read_string
+    add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    pop ebp
+    ret
+
+read_int16:
+
+    push ebp
+    mov ebp, esp
+
+    push 16
+    push numBuffer
+    call read_string
+    add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    cmp eax, 32767
+    jg erro16
+
+    cmp eax, -32768
+    jl erro16
+
+    pop ebp
+    ret
+
+erro16:
+
+    push tamErro16
+    push msgErro16
+    call print_string
+    add esp, 8
+
+    jmp fim
+
 atoi:
 
     push ebp
@@ -573,6 +827,15 @@ atoi:
     mov esi, [ebp+8]
 
     xor eax, eax
+    xor edx, edx        ; flag de negativo
+
+    mov bl, [esi]
+
+    cmp bl, '-'
+    jne loop_atoi
+
+    mov dl, 1
+    inc esi
 
 loop_atoi:
 
@@ -588,14 +851,19 @@ loop_atoi:
     sub bl, '0'
 
     imul eax, eax, 10
-
     add eax, ebx
 
     inc esi
-
     jmp loop_atoi
 
 fim_atoi:
+
+    cmp dl, 1
+    jne fim_atoi_ok
+
+    neg eax
+
+fim_atoi_ok:
 
     pop ebp
     ret

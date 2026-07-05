@@ -1,5 +1,7 @@
 global multiplicacao
 
+extern overflow
+
 section .text
 
 multiplicacao:
@@ -10,6 +12,8 @@ multiplicacao:
     mov eax, [ebp+8]
 
     imul dword [ebp+12]
+
+    jo overflow
 
     pop ebp
     ret
