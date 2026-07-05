@@ -1,4 +1,5 @@
 global _start
+global overflow
 
 extern soma
 extern subtracao
@@ -43,6 +44,9 @@ tamResultado equ $-msgResultado
 
 msgErro16 db 10,"ERRO: valor fora do intervalo de 16 bits",10
 tamErro16 equ $-msgErro16
+
+msgOverflow db 10,"OCORREU OVERFLOW",10
+tamOverflow equ $-msgOverflow
 
 section .bss
 
@@ -564,6 +568,15 @@ executar_mod:
 
     jmp menu
 
+overflow:
+
+    push tamOverflow
+    push msgOverflow
+    call print_string
+    add esp, 8
+
+    jmp fim
+
 fim:
 
     mov eax, 1
@@ -736,6 +749,15 @@ atoi:
     mov esi, [ebp+8]
 
     xor eax, eax
+    xor ecx, ecx
+
+    mov bl, [esi]
+
+    cmp bl, '-'
+    jne loop_atoi
+
+    mov ecx, 1
+    inc esi
 
 loop_atoi:
 
@@ -759,6 +781,13 @@ loop_atoi:
     jmp loop_atoi
 
 fim_atoi:
+
+    cmp ecx, 1
+    jne fim_atoi_ok
+
+    neg eax
+
+fim_atoi_ok:
 
     pop ebp
     ret

@@ -1,4 +1,5 @@
 global expo
+extern overflow
 
 section .text
 
@@ -7,8 +8,8 @@ expo:
     push ebp
     mov ebp, esp
 
-    mov ebx, [ebp+8]     ; base
-    mov ecx, [ebp+12]    ; expoente
+    mov ebx, [ebp+8]
+    mov ecx, [ebp+12]
 
     mov eax, 1
 
@@ -18,6 +19,8 @@ loop_exp:
     je fim_exp
 
     imul eax, ebx
+
+    jo overflow
 
     dec ecx
     jmp loop_exp
