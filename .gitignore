@@ -1,0 +1,18 @@
+# Objetos gerados pelo NASM
+*.o
+
+# Executáveis gerados
+calculadora
+teste
+
+# Scripts temporários
+*.out
+
+# Arquivos de backup do VS Code
+*.tmp
+
+# Pasta de configuração do VS Code 
+.vscode/
+
+# Arquivos de sistema
+.DS_Store
