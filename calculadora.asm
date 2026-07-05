@@ -128,10 +128,10 @@ menu:
     je executar_divisao
 
     cmp al, '5'
-    je executar_exponenciacao
+    je executar_expo
 
     cmp al, '6'
-    je executar_modulo
+    je executar_mod
 
     cmp al, '7'
     je fim
@@ -296,15 +296,62 @@ executar_multiplicacao:
 
 executar_divisao:
 
+    push tamNum1
+    push msgNum1
+    call print_string
+    add esp, 8
+
+    push 16
+    push numBuffer
+    call read_string
+    add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    mov [num1], eax
+
+    push tamNum2
+    push msgNum2
+    call print_string
+    add esp, 8
+
+    push 16
+    push numBuffer
+    call read_string
+    add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    mov [num2], eax
+
+    push dword [num2]
+    push dword [num1]
+    call divisao
+    add esp, 8
+
+    mov [num1], eax
+
+    push tamResultado
+    push msgResultado
+    call print_string
+    add esp, 8
+
+    push dword [num1]
+    call print_int
+    add esp, 4
+
+    jmp menu
+
+executar_expo:
+
     ; implementar depois
     jmp menu
 
-executar_exponenciacao:
-
-    ; implementar depois
-    jmp menu
-
-executar_modulo:
+executar_mod:
 
     ; implementar depois
     jmp menu
