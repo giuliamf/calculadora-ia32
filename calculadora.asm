@@ -9,7 +9,7 @@ extern exponenciacao
 
 section .data
 
-msgNome db "Bem-vindo. Digite seu nome: "
+msgNome db "Digite seu nome: "
 tamNome equ $-msgNome
 
 msgOla db 10,"Hola, "
@@ -38,12 +38,19 @@ tamNum1 equ $-msgNum1
 msgNum2 db 10,"Digite o segundo numero: "
 tamNum2 equ $-msgNum2
 
+msgResultado db 10,"Resultado: "
+tamResultado equ $-msgResultado
+
+
 section .bss
 
 nome resb 50
 precisao resb 2
 opcao resb 2
 numBuffer resb 16
+resultadoBuffer resb 16
+num1 resd 1
+num2 resd 1
 
 section .text
 
@@ -143,6 +150,12 @@ executar_soma:
     call read_string
     add esp, 8
 
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    mov [num1], eax
+
     push tamNum2
     push msgNum2
     call print_string
@@ -152,6 +165,28 @@ executar_soma:
     push numBuffer
     call read_string
     add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    mov [num2], eax
+
+    push dword [num2]
+    push dword [num1]
+    call soma
+    add esp, 8
+
+    mov [num1], eax
+
+    push tamResultado
+    push msgResultado
+    call print_string
+    add esp, 8
+
+    push dword [num1]
+    call print_int
+    add esp, 4
 
     jmp menu
 
@@ -230,6 +265,56 @@ fim_strlen:
     pop ebp
     ret
 
+
+print_int:
+
+    push ebp
+    mov ebp, esp
+
+    push ebx
+    push ecx
+    push edx
+    push esi
+
+    mov eax, [ebp+8]
+
+    mov esi, resultadoBuffer
+    add esi, 15
+
+    mov byte [esi], 10
+
+    mov ebx, 10
+
+converter:
+
+    dec esi
+
+    xor edx, edx
+    div ebx
+
+    add dl, '0'
+    mov [esi], dl
+
+    test eax, eax
+    jnz converter
+
+    mov ecx, resultadoBuffer
+    add ecx, 16
+
+    sub ecx, esi
+
+    push ecx
+    push esi
+    call print_string
+    add esp, 8
+
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+
+    pop ebp
+    ret
 print_string:
 
     push ebp
@@ -241,6 +326,41 @@ print_string:
     mov edx, [ebp+12]
 
     int 80h
+
+    pop ebp
+    ret
+
+atoi:
+
+    push ebp
+    mov ebp, esp
+
+    mov esi, [ebp+8]
+
+    xor eax, eax
+
+loop_atoi:
+
+    xor ebx, ebx
+    mov bl, [esi]
+
+    cmp bl, 10
+    je fim_atoi
+
+    cmp bl, 0
+    je fim_atoi
+
+    sub bl, '0'
+
+    imul eax, eax, 10
+
+    add eax, ebx
+
+    inc esi
+
+    jmp loop_atoi
+
+fim_atoi:
 
     pop ebp
     ret
