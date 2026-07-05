@@ -68,6 +68,15 @@ _start:
     call print_string
     add esp, 8
 
+    push nome
+    call strlen
+    add esp, 4
+
+    push eax
+    push nome
+    call print_string
+    add esp, 8
+
     push tamCalc
     push msgCalc
     call print_string
@@ -188,6 +197,35 @@ read_string:
     mov edx, [ebp+12]
 
     int 80h
+
+    pop ebp
+    ret
+
+strlen:
+
+    push ebp
+    mov ebp, esp
+
+    mov esi, [ebp+8]
+
+    xor eax, eax
+
+loop_strlen:
+
+    mov bl, [esi]
+
+    cmp bl, 10
+    je fim_strlen
+
+    cmp bl, 0
+    je fim_strlen
+
+    inc eax
+    inc esi
+
+    jmp loop_strlen
+
+fim_strlen:
 
     pop ebp
     ret
