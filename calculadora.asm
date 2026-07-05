@@ -1,5 +1,6 @@
 global _start
 global overflow
+global erro_div_zero
 
 extern soma
 extern subtracao
@@ -12,7 +13,7 @@ section .data
 
 sinalMenos db "-"
 
-msgNome db "Digite seu nome: "
+msgNome db "Bem vindo. Digite seu nome: "
 tamNome equ $-msgNome
 
 msgOla db 10,"Hola, "
@@ -50,8 +51,12 @@ tamErro16 equ $-msgErro16
 msgOverflow db 10,"OCORREU OVERFLOW",10
 tamOverflow equ $-msgOverflow
 
+msgDivZero db 10,"ERRO: DIVISAO POR ZERO",10
+tamDivZero equ $-msgDivZero
+
 section .bss
 
+enterBuffer resb 2
 nome resb 50
 precisao resb 2
 opcao resb 2
@@ -217,6 +222,11 @@ executar_soma:
     push dword [num1]
     call print_int
     add esp, 4
+
+    push 2
+    push enterBuffer
+    call read_string
+    add esp, 8
 
     jmp menu
 
@@ -574,6 +584,15 @@ overflow:
 
     push tamOverflow
     push msgOverflow
+    call print_string
+    add esp, 8
+
+    jmp fim
+
+erro_div_zero:
+
+    push tamDivZero
+    push msgDivZero
     call print_string
     add esp, 8
 
