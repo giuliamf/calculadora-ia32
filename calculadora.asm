@@ -244,7 +244,54 @@ executar_subtracao:
 
 executar_multiplicacao:
 
-    ; implementar depois
+    push tamNum1
+    push msgNum1
+    call print_string
+    add esp, 8
+
+    push 16
+    push numBuffer
+    call read_string
+    add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    mov [num1], eax
+
+    push tamNum2
+    push msgNum2
+    call print_string
+    add esp, 8
+
+    push 16
+    push numBuffer
+    call read_string
+    add esp, 8
+
+    push numBuffer
+    call atoi
+    add esp, 4
+
+    mov [num2], eax
+
+    push dword [num2]
+    push dword [num1]
+    call multiplicacao
+    add esp, 8
+
+    mov [num1], eax
+
+    push tamResultado
+    push msgResultado
+    call print_string
+    add esp, 8
+
+    push dword [num1]
+    call print_int
+    add esp, 4
+
     jmp menu
 
 executar_divisao:
